@@ -1,0 +1,9 @@
+version: v1beta1
+name: buf.build/henprasetya/omdbapi
+
+build:
+  roots:
+    - pkg
+lint:
+  use:
+    - DEFAULT
