@@ -1,13 +1,14 @@
 package omdb
 
 import (
+	"reflect"
+	"testing"
+
 	"github.com/golang/mock/gomock"
 	mockOmdb "github.com/henprasetya/omdbapi/pkg/mock/repo/omdb"
 	"github.com/henprasetya/omdbapi/pkg/model"
 	"github.com/henprasetya/omdbapi/pkg/repo/omdb"
 	"github.com/pkg/errors"
-	"reflect"
-	"testing"
 )
 
 func Test_service_SearchMovie(t *testing.T) {
@@ -29,14 +30,14 @@ func Test_service_SearchMovie(t *testing.T) {
 		args    args
 		want    *model.Response
 		wantErr bool
-		mock func()
+		mock    func()
 	}{
 		{
-			name:    "error search movie",
-			fields:  fields{
+			name: "error search movie",
+			fields: fields{
 				api: mockApi,
 			},
-			args:    args{
+			args: args{
 				search: "a",
 				page:   "1",
 			},
@@ -83,20 +84,20 @@ func Test_service_MovieDetail(t *testing.T) {
 		args    args
 		want    *model.Movie
 		wantErr bool
-		mock func()
+		mock    func()
 	}{
 		{
-			name:    "error movie detail",
-			fields:  fields{
+			name: "error movie detail",
+			fields: fields{
 				api: mockApi,
 			},
-			args:    args{
+			args: args{
 				omdbID: "1",
 			},
 			want:    nil,
 			wantErr: true,
 			mock: func() {
-				mockApi.EXPECT().MovieDetail(gomock.Any(), gomock.Any()).Return(nil, errors.New("error")).Times(1)
+				mockApi.EXPECT().MovieDetail(gomock.Any()).Return(nil, errors.New("error")).Times(1)
 			},
 		},
 	}
@@ -106,13 +107,13 @@ func Test_service_MovieDetail(t *testing.T) {
 				api: tt.fields.api,
 			}
 			tt.mock()
-			got, err := s.SearchMovie(tt.args.search, tt.args.page)
+			got, err := s.MovieDetail(tt.args.omdbID)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("SearchMovie() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("MovieDetail() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SearchMovie() got = %v, want %v", got, tt.want)
+				t.Errorf("MovieDetail() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
