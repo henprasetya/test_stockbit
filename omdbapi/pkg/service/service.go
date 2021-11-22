@@ -11,7 +11,7 @@ type Services struct {
 
 func CreateServices(r *repo.Repository) *Services {
 
-	m := service.NewMovieService(r.MovieRepo)
+	m := service.NewMovieService(r.MovieRepo, r.SqlRepo)
 	return &Services{
 		MovieService: m,
 	}
