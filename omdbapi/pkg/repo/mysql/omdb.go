@@ -7,6 +7,8 @@ import (
 	"github.com/henprasetya/omdbapi/pkg/lib/mysql"
 )
 
+//go:generate mockgen -destination=../../mock/repo/mysql/mock_omdb.go -package=mock_repository github.com/henprasetya/omdbapi/pkg/repo/mysql OmdbMysql
+
 type OmdbMysql interface {
 	SelectFromDb()
 }

@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -destination=../../mock/lib/http/mock_http_client.go -package=mock_repository github.com/henprasetya/omdbapi/pkg/lib/http HttpClient
+
 type HttpClient interface {
 	GET(url string) ([]byte, error)
 }

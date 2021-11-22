@@ -8,9 +8,10 @@ import (
 
 	client "github.com/henprasetya/omdbapi/pkg/lib/http"
 	"github.com/henprasetya/omdbapi/pkg/model"
-	"github.com/henprasetya/omdbapi/pkg/repo/mysql"
 	"github.com/joho/godotenv"
 )
+
+//go:generate mockgen -destination=../../mock/repo/omdb/mock_omdb.go -package=mock_repository github.com/henprasetya/omdbapi/pkg/repo/omdb MovieRepo
 
 type MovieRepo interface {
 	SearchMovie(search string, page string) (*model.Response, error)
@@ -21,11 +22,9 @@ type movieRepo struct {
 	client  client.HttpClient
 	baseUrl string
 	apikey  string
-
-	db mysql.OmdbMysql
 }
 
-func NewMovieRepo(client client.HttpClient, db mysql.OmdbMysql) MovieRepo {
+func NewMovieRepo(client client.HttpClient) MovieRepo {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Print("Cant Load Properties")
@@ -36,13 +35,10 @@ func NewMovieRepo(client client.HttpClient, db mysql.OmdbMysql) MovieRepo {
 		client:  client,
 		baseUrl: baseUrl,
 		apikey:  omdbKey,
-		db:      db,
 	}
 }
 
 func (m *movieRepo) SearchMovie(search string, page string) (*model.Response, error) {
-
-	m.db.SelectFromDb()
 	url := fmt.Sprintf("%s/?apikey=%s&s=%s&page=%s", m.baseUrl, m.apikey, search, page)
 	log.Print(url)
 	data, err := m.client.GET(url)
@@ -60,7 +56,6 @@ func (m *movieRepo) SearchMovie(search string, page string) (*model.Response, er
 }
 
 func (m *movieRepo) MovieDetail(omdbID string) (*model.Movie, error) {
-	m.db.SelectFromDb()
 	url := fmt.Sprintf("%s/?apikey=%s&i=%s", m.baseUrl, m.apikey, omdbID)
 	log.Print(url)
 	data, err := m.client.GET(url)
